@@ -1,21 +1,25 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../domain/entities/article.dart';
+// 💡 CORRECCIÓN: Ruta absoluta
+import 'package:news_app_clean_architecture/features/daily_news/domain/entities/article.dart';
 
 class ArticleWidget extends StatelessWidget {
   final ArticleEntity? article;
-  final bool? isRemovable;
+  // 💡 CORRECCIÓN: Quitamos el '?' para que no sea nullable
+  final bool isRemovable;
   final void Function(ArticleEntity article)? onRemove;
   final void Function(ArticleEntity article)? onArticlePressed;
+  final void Function(ArticleEntity article)? onSave;
 
   const ArticleWidget({
     Key? key,
     this.article,
     this.onArticlePressed,
-    this.isRemovable = false,
+    this.isRemovable = false, // Valor por defecto
     this.onRemove,
-  }) : super(key: key);
+    this.onSave,
+  }): super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +27,7 @@ class ArticleWidget extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onTap: _onTap,
       child: Container(
-        padding: const EdgeInsetsDirectional.only(
-            start: 14, end: 14, bottom: 7, top: 7),
+        padding: const EdgeInsetsDirectional.only(start: 14, end: 14, bottom: 7, top: 7),
         height: MediaQuery.of(context).size.width / 2.2,
         child: Row(
           children: [
@@ -39,49 +42,53 @@ class ArticleWidget extends StatelessWidget {
 
   Widget _buildImage(BuildContext context) {
     return CachedNetworkImage(
-        imageUrl: article!.urlToImage!,
-        imageBuilder: (context, imageProvider) => Padding(
-              padding: const EdgeInsetsDirectional.only(end: 14),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: Container(
-                  width: MediaQuery.of(context).size.width / 3,
-                  height: double.maxFinite,
-                  decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.08),
-                      image: DecorationImage(
-                          image: imageProvider, fit: BoxFit.cover)),
-                ),
+      imageUrl: article!.urlToImage ?? '',
+      imageBuilder: (context, imageProvider) => Padding(
+        padding: const EdgeInsetsDirectional.only(end: 14),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20.0),
+          child: Container(
+            width: MediaQuery.of(context).size.width / 3,
+            height: double.maxFinite,
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.08),
+              image: DecorationImage(
+                image: imageProvider,
+                fit: BoxFit.cover
               ),
             ),
-        progressIndicatorBuilder: (context, url, downloadProgress) => Padding(
-              padding: const EdgeInsetsDirectional.only(end: 14),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: Container(
-                  width: MediaQuery.of(context).size.width / 3,
-                  height: double.maxFinite,
-                  child: CupertinoActivityIndicator(),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.08),
-                  ),
-                ),
-              ),
+          ),
+        ),
+      ),
+      progressIndicatorBuilder: (context, url, downloadProgress) => Padding(
+        padding: const EdgeInsetsDirectional.only(end: 14),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20.0),
+          child: Container(
+            width: MediaQuery.of(context).size.width / 3,
+            height: double.maxFinite,
+            child: const CupertinoActivityIndicator(),
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.08),
             ),
-        errorWidget: (context, url, error) => Padding(
-              padding: const EdgeInsetsDirectional.only(end: 14),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: Container(
-                  width: MediaQuery.of(context).size.width / 3,
-                  height: double.maxFinite,
-                  child: Icon(Icons.error),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.08),
-                  ),
-                ),
-              ),
-            ));
+          ),
+        ),
+      ),
+      errorWidget: (context, url, error) => Padding(
+        padding: const EdgeInsetsDirectional.only(end: 14),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20.0),
+          child: Container(
+            width: MediaQuery.of(context).size.width / 3,
+            height: double.maxFinite,
+            child: const Icon(Icons.error),
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.08),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildTitleAndDescription() {
@@ -122,11 +129,16 @@ class ArticleWidget extends StatelessWidget {
                 const Icon(Icons.timeline_outlined, size: 16),
                 const SizedBox(width: 4),
                 Text(
-                  article!.publishedAt!,
-                  style: const TextStyle(
-                    fontSize: 12,
-                  ),
+                  article!.publishedAt ?? '',
+                  style: const TextStyle(fontSize: 12),
                 ),
+                const Spacer(),
+                // 💡 BOTÓN FAVORITOS (Ahora funciona porque isRemovable es bool seguro)
+                if (!isRemovable && onSave != null)
+                   GestureDetector(
+                     onTap: () => onSave!(article!),
+                     child: const Icon(Icons.bookmark_add_outlined, color: Colors.blue),
+                   ),
               ],
             ),
           ],
@@ -136,7 +148,7 @@ class ArticleWidget extends StatelessWidget {
   }
 
   Widget _buildRemovableArea() {
-    if (isRemovable!) {
+    if (isRemovable) {
       return GestureDetector(
         onTap: _onRemove,
         child: const Padding(
