@@ -54,7 +54,6 @@ class ArticleDetailsView extends HookWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title
           Text(
             article!.title!,
             style: const TextStyle(
@@ -62,9 +61,7 @@ class ArticleDetailsView extends HookWidget {
                 fontSize: 20,
                 fontWeight: FontWeight.w900),
           ),
-
           const SizedBox(height: 14),
-          // DateTime
           Row(
             children: [
               const Icon(Ionicons.time_outline, size: 16),

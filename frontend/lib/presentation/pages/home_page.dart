@@ -15,7 +15,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  // Controlamos el Cubit aquí para refrescar la lista cuando se vuelve de crear
   final MyArticlesCubit _myArticlesCubit = GetIt.instance<MyArticlesCubit>();
 
   @override
@@ -39,10 +38,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> widgetOptions = <Widget>[
-      // Pestaña 0: Noticias Externas
       const DailyNews(),
-
-      // Pestaña 1: Tus Reportajes (Con Cubit inyectado)
       BlocProvider.value(
         value: _myArticlesCubit,
         child: const MyArticlesPage(),
@@ -50,8 +46,7 @@ class _HomePageState extends State<HomePage> {
     ];
 
     return Scaffold(
-      backgroundColor:
-          const Color(0xFFFDF5E6), // Color crema estilo papel antiguo
+      backgroundColor: const Color(0xFFFDF5E6),
       body: Center(
         child: widgetOptions.elementAt(_selectedIndex),
       ),
@@ -75,7 +70,6 @@ class _HomePageState extends State<HomePage> {
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
       ),
-      // El botón flotante solo aparece en tu pestaña
       floatingActionButton: _selectedIndex == 1
           ? FloatingActionButton.extended(
               onPressed: () async {
@@ -85,7 +79,6 @@ class _HomePageState extends State<HomePage> {
                       builder: (context) =>
                           const ArticleCreationPage(articleToEdit: null)),
                 );
-                // Refrescar la lista al volver de crear
                 _myArticlesCubit.loadArticles();
               },
               label: const Text("Redactar"),

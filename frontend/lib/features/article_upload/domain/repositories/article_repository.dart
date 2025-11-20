@@ -5,6 +5,5 @@ abstract class ArticleRepository {
   Future<Either<dynamic, ArticleEntity>> createArticle(ArticleEntity article);
   Future<Either<dynamic, String>> uploadArticleImage(String imagePath);
   Future<Either<dynamic, List<ArticleEntity>>> getUploadedArticles();
-  // 💡 NUEVO
   Future<Either<dynamic, void>> deleteArticle(String articleId);
 }

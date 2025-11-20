@@ -190,7 +190,6 @@ class _DailyNewsState extends State<DailyNews> {
                         _filteredArticles.remove(article);
                       });
                     },
-                    // 💡 LÓGICA DEL BOTÓN FAVORITO
                     onSave: (article) async {
                       try {
                         await GetIt.instance<SaveArticleUseCase>()(

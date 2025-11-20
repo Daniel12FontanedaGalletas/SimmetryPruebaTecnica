@@ -1,19 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'dart:io'; 
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:news_app_clean_architecture/features/article_upload/domain/entities/article_entity.dart';
-import 'package:http/http.dart' as http; 
+import 'package:http/http.dart' as http;
 
 class FirebaseArticleDatasource {
   final FirebaseFirestore firestore;
   final FirebaseStorage storage;
   final String articlesCollection = 'articles';
-  final String storageBucket = "symmetry-reporter-backend.firebasestorage.app"; 
+  final String storageBucket = "symmetry-reporter-backend.firebasestorage.app";
 
   FirebaseArticleDatasource({required this.firestore, required this.storage});
 
-  // --- SUBIDA DE IMÁGENES ---
   Future<String> uploadImage(String imagePath, String userId) async {
     final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
     final pathOnCloud = 'media/articles/$userId/$fileName';
@@ -34,14 +33,14 @@ class FirebaseArticleDatasource {
     }
   }
 
-  Future<String> _uploadImageRestWindows(String imagePath, String pathOnCloud) async {
+  Future<String> _uploadImageRestWindows(
+      String imagePath, String pathOnCloud) async {
     try {
       final file = File(imagePath);
       final bytes = await file.readAsBytes();
       final encodedPath = Uri.encodeComponent(pathOnCloud);
       final url = Uri.parse(
-        'https://firebasestorage.googleapis.com/v0/b/$storageBucket/o?name=$encodedPath'
-      );
+          'https://firebasestorage.googleapis.com/v0/b/$storageBucket/o?name=$encodedPath');
 
       final response = await http.post(
         url,
@@ -52,15 +51,14 @@ class FirebaseArticleDatasource {
       if (response.statusCode == 200) {
         return 'https://firebasestorage.googleapis.com/v0/b/$storageBucket/o/$encodedPath?alt=media';
       } else {
-        throw Exception('Fallo REST Windows: ${response.statusCode} ${response.body}');
+        throw Exception(
+            'Fallo REST Windows: ${response.statusCode} ${response.body}');
       }
     } catch (e) {
       throw Exception("Error subida Windows REST: $e");
     }
   }
 
-  // --- CRUD DE ARTÍCULOS ---
-  
   Future<void> uploadArticle(ArticleEntity article) async {
     final articleMap = {
       'articleId': article.articleId,
@@ -73,21 +71,19 @@ class FirebaseArticleDatasource {
       'thumbnailURL': article.thumbnailURL,
       'isPublished': article.isPublished,
     };
-    // Usamos set para crear o sobrescribir (Editar)
-    await firestore.collection(articlesCollection).doc(article.articleId).set(articleMap);
+    await firestore
+        .collection(articlesCollection)
+        .doc(article.articleId)
+        .set(articleMap);
   }
 
-  // 💡 NUEVO: Método Borrar
   Future<void> deleteArticle(String articleId) async {
     await firestore.collection(articlesCollection).doc(articleId).delete();
   }
 
   Future<List<ArticleEntity>> getArticles() async {
     try {
-      final snapshot = await firestore
-          .collection(articlesCollection)
-          //.orderBy('datePublished', descending: true) 
-          .get();
+      final snapshot = await firestore.collection(articlesCollection).get();
 
       return snapshot.docs.map((doc) {
         final data = doc.data();

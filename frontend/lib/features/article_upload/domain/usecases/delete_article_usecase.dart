@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:news_app_clean_architecture/features/article_upload/domain/repositories/article_repository.dart';
+import '../repositories/article_repository.dart';
 
 class DeleteArticleUseCase {
   final ArticleRepository repository;

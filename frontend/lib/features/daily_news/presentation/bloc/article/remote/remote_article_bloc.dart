@@ -3,14 +3,12 @@ import 'package:news_app_clean_architecture/core/resources/data_state.dart';
 import 'package:news_app_clean_architecture/features/daily_news/domain/usecases/get_article.dart';
 import 'package:news_app_clean_architecture/features/daily_news/presentation/bloc/article/remote/remote_article_event.dart';
 import 'package:news_app_clean_architecture/features/daily_news/presentation/bloc/article/remote/remote_article_state.dart';
-// 💡 CORRECCIÓN: Ruta absoluta
 import 'package:news_app_clean_architecture/features/daily_news/domain/entities/article.dart';
 
 class RemoteArticlesBloc
     extends Bloc<RemoteArticlesEvent, RemoteArticlesState> {
   final GetArticleUseCase _getArticleUseCase;
 
-  // Lista para mantener los artículos añadidos por el usuario
   final List<ArticleEntity> _userAddedArticles = [];
 
   RemoteArticlesBloc(this._getArticleUseCase)
@@ -26,7 +24,6 @@ class RemoteArticlesBloc
     final dataState = await _getArticleUseCase(params: event.category);
 
     if (dataState is DataSuccess && dataState.data!.isNotEmpty) {
-      // Lógica para eliminar duplicados de la carga inicial
       final articles = dataState.data!;
       final uniqueArticles = <ArticleEntity>[];
       final seenUrls = <String>{};
@@ -37,7 +34,6 @@ class RemoteArticlesBloc
         }
       }
 
-      // Si la categoría es "general" o nula, añadimos los artículos del usuario
       if (event.category == 'general' || event.category == null) {
         final combinedList = [..._userAddedArticles, ...uniqueArticles];
         emit(RemoteArticlesDone(combinedList));
@@ -52,7 +48,6 @@ class RemoteArticlesBloc
 
   void onAddCustomArticle(
       AddCustomArticle event, Emitter<RemoteArticlesState> emit) {
-    // Comprobar duplicados en la lista interna de artículos de usuario
     final isDuplicateInUserList = _userAddedArticles
         .any((article) => article.title == event.article.title);
     if (!isDuplicateInUserList) {
@@ -62,7 +57,6 @@ class RemoteArticlesBloc
     if (state is RemoteArticlesDone) {
       final currentList = List<ArticleEntity>.from(state.articles!);
 
-      // Comprobar si ya existe en la lista que se está mostrando
       final isDuplicateInCurrentList =
           currentList.any((article) => article.title == event.article.title);
 
@@ -74,7 +68,6 @@ class RemoteArticlesBloc
   }
 
   void onRemoveArticle(RemoveArticle event, Emitter<RemoteArticlesState> emit) {
-    // Eliminar de la lista interna persistente
     _userAddedArticles
         .removeWhere((article) => article.title == event.article.title);
 

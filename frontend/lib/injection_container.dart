@@ -10,54 +10,29 @@ import 'features/daily_news/domain/usecases/get_saved_article.dart';
 import 'features/daily_news/domain/usecases/remove_article.dart';
 import 'features/daily_news/domain/usecases/save_article.dart';
 import 'features/daily_news/presentation/bloc/article/local/local_article_bloc.dart';
-
-// 💡 CORRECCIÓN: Usamos ruta relativa simple. 
-// Como este archivo está en 'lib/', y el otro en 'lib/core/', esto debe funcionar sí o sí.
-import 'core/service_locator.dart' as di; 
+import 'core/service_locator.dart' as di;
 
 final sl = GetIt.instance;
 
 Future<void> initializeDependencies() async {
-
-  // ===============================================
-  // REGISTROS DEL PROYECTO BASE
-  // ===============================================
-
-  final database = await $FloorAppDatabase.databaseBuilder('app_database.db').build();
+  final database =
+      await $FloorAppDatabase.databaseBuilder('app_database.db').build();
   sl.registerSingleton<AppDatabase>(database);
-  
+
   sl.registerSingleton<Dio>(Dio());
 
   sl.registerSingleton<NewsApiService>(NewsApiService(sl()));
-  
-  sl.registerSingleton<ArticleRepository>(
-    ArticleRepositoryImpl(sl(), sl())
-  );
-  
-  sl.registerSingleton<GetArticleUseCase>(
-    GetArticleUseCase(sl())
-  );
-  sl.registerSingleton<GetSavedArticleUseCase>(
-    GetSavedArticleUseCase(sl())
-  );
-  sl.registerSingleton<SaveArticleUseCase>(
-    SaveArticleUseCase(sl())
-  );
-  sl.registerSingleton<RemoveArticleUseCase>(
-    RemoveArticleUseCase(sl())
-  );
 
+  sl.registerSingleton<ArticleRepository>(ArticleRepositoryImpl(sl(), sl()));
 
-  sl.registerFactory<RemoteArticlesBloc>(
-    ()=> RemoteArticlesBloc(sl())
-  );
+  sl.registerSingleton<GetArticleUseCase>(GetArticleUseCase(sl()));
+  sl.registerSingleton<GetSavedArticleUseCase>(GetSavedArticleUseCase(sl()));
+  sl.registerSingleton<SaveArticleUseCase>(SaveArticleUseCase(sl()));
+  sl.registerSingleton<RemoveArticleUseCase>(RemoveArticleUseCase(sl()));
+
+  sl.registerFactory<RemoteArticlesBloc>(() => RemoteArticlesBloc(sl()));
   sl.registerFactory<LocalArticleBloc>(
-    ()=> LocalArticleBloc(sl(), sl(), sl())
-  );
+      () => LocalArticleBloc(sl(), sl(), sl()));
 
-  // ===============================================
-  // TU REGISTRO DE FEATURE (article_upload)
-  // ===============================================
-  di.init(); 
-
+  di.init();
 }

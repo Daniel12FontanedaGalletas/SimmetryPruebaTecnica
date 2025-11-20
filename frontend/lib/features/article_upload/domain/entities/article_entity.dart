@@ -1,7 +1,5 @@
-// article_entity.dart
 import 'package:equatable/equatable.dart';
 
-// La entidad (objeto de negocio puro)
 class ArticleEntity extends Equatable {
   final String articleId;
   final String title;
@@ -25,8 +23,32 @@ class ArticleEntity extends Equatable {
     required this.isPublished,
   });
 
+  ArticleEntity copyWith({
+    String? articleId,
+    String? title,
+    String? content,
+    String? authorName,
+    String? authorUID,
+    String? category,
+    DateTime? datePublished,
+    String? thumbnailURL,
+    bool? isPublished,
+  }) {
+    return ArticleEntity(
+      articleId: articleId ?? this.articleId,
+      title: title ?? this.title,
+      content: content ?? this.content,
+      authorName: authorName ?? this.authorName,
+      authorUID: authorUID ?? this.authorUID,
+      category: category ?? this.category,
+      datePublished: datePublished ?? this.datePublished,
+      thumbnailURL: thumbnailURL ?? this.thumbnailURL,
+      isPublished: isPublished ?? this.isPublished,
+    );
+  }
+
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         articleId,
         title,
         content,

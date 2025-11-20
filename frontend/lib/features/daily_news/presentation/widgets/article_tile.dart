@@ -1,12 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-// 💡 CORRECCIÓN: Ruta absoluta
 import 'package:news_app_clean_architecture/features/daily_news/domain/entities/article.dart';
 
 class ArticleWidget extends StatelessWidget {
   final ArticleEntity? article;
-  // 💡 CORRECCIÓN: Quitamos el '?' para que no sea nullable
   final bool isRemovable;
   final void Function(ArticleEntity article)? onRemove;
   final void Function(ArticleEntity article)? onArticlePressed;
@@ -16,7 +14,7 @@ class ArticleWidget extends StatelessWidget {
     Key? key,
     this.article,
     this.onArticlePressed,
-    this.isRemovable = false, // Valor por defecto
+    this.isRemovable = false,
     this.onRemove,
     this.onSave,
   }) : super(key: key);
@@ -29,7 +27,7 @@ class ArticleWidget extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         decoration: BoxDecoration(
-          color: const Color(0xFFF5F5DC), // Beige
+          color: const Color(0xFFF5F5DC),
           border: Border.all(color: Colors.black, width: 3),
           borderRadius: BorderRadius.circular(8),
         ),
@@ -89,7 +87,6 @@ class ArticleWidget extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Title
                 Text(
                   (article!.title ?? '').toUpperCase(),
                   maxLines: 4,
@@ -103,7 +100,6 @@ class ArticleWidget extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                // Description
                 Text(
                   article!.description ?? '',
                   maxLines: 3,
@@ -116,73 +112,79 @@ class ArticleWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                // Save Button
-                if (!isRemovable && onSave != null)
-                  GestureDetector(
-                    onTap: () => onSave!(article!),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.bookmark_border,
-                              color: Colors.white, size: 16),
-                          SizedBox(width: 6),
-                          Text(
-                            "GUARDAR",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
+                if (!isRemovable && article?.url == null && onRemove != null)
+                  Flexible(
+                    child: GestureDetector(
+                      onTap: () => onRemove!(article!),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.redAccent,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.delete_outline,
+                                color: Colors.white, size: 16),
+                            const SizedBox(width: 6),
+                            const Flexible(
+                              child: Text(
+                                "ELIMINAR",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
-
-                // Espacio entre botones
                 if (!isRemovable &&
                     article?.url == null &&
                     onRemove != null &&
                     onSave != null)
-                  const SizedBox(width: 8),
-
-                // Botón para eliminar artículos propios en la vista global
-                if (!isRemovable && article?.url == null && onRemove != null)
-                  GestureDetector(
-                    onTap: () => onRemove!(article!),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.redAccent,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.delete_outline,
-                              color: Colors.white, size: 16),
-                          SizedBox(width: 6),
-                          Text(
-                            "ELIMINAR",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
+                  const SizedBox(width: 8.0),
+                if (!isRemovable && onSave != null)
+                  Flexible(
+                    child: GestureDetector(
+                      onTap: () => onSave!(article!),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.bookmark_border,
+                                color: Colors.white, size: 16),
+                            const SizedBox(width: 6),
+                            const Flexible(
+                              child: Text(
+                                "GUARDAR",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
-
                 if (isRemovable)
                   GestureDetector(
                     onTap: () {

@@ -10,7 +10,8 @@ class ArticleRepositoryImpl implements ArticleRepository {
   ArticleRepositoryImpl({required this.datasource});
 
   @override
-  Future<Either<dynamic, ArticleEntity>> createArticle(ArticleEntity article) async {
+  Future<Either<dynamic, ArticleEntity>> createArticle(
+      ArticleEntity article) async {
     try {
       await datasource.uploadArticle(article);
       return Right(article);
@@ -23,7 +24,7 @@ class ArticleRepositoryImpl implements ArticleRepository {
 
   @override
   Future<Either<dynamic, String>> uploadArticleImage(String imagePath) async {
-    const mockUserId = 'REPORTER_DANIEL_UID'; 
+    const mockUserId = 'REPORTER_DANIEL_UID';
     try {
       final url = await datasource.uploadImage(imagePath, mockUserId);
       return Right(url);
@@ -31,7 +32,7 @@ class ArticleRepositoryImpl implements ArticleRepository {
       return Left('Error al subir imagen: $e');
     }
   }
-  
+
   @override
   Future<Either<dynamic, List<ArticleEntity>>> getUploadedArticles() async {
     try {
@@ -42,7 +43,6 @@ class ArticleRepositoryImpl implements ArticleRepository {
     }
   }
 
-  // 💡 NUEVO
   @override
   Future<Either<dynamic, void>> deleteArticle(String articleId) async {
     try {

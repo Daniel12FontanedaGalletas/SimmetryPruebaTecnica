@@ -8,64 +8,41 @@ class ArticleCreationCubit extends Cubit<ArticleCreationState> {
   final CreateArticleUseCase createArticleUseCase;
   final UploadArticleImageUseCase uploadArticleImageUseCase;
 
-  // Inyectamos AMBOS casos de uso
-  ArticleCreationCubit(this.createArticleUseCase, this.uploadArticleImageUseCase)
+  ArticleCreationCubit(
+      this.createArticleUseCase, this.uploadArticleImageUseCase)
       : super(const ArticleCreationState());
 
   Future<void> submitArticle({
     required ArticleEntity article,
-    String? imagePath, // Ruta local de la imagen seleccionada
+    String? imagePath,
   }) async {
     emit(state.copyWith(isLoading: true, errorMessage: null, isSuccess: false));
 
-    String finalThumbnailUrl = article.thumbnailURL; 
+    String? imageUrl = article.thumbnailURL;
 
-    // 1. Si hay una imagen seleccionada, subirla primero
     if (imagePath != null) {
-      final uploadResult = await uploadArticleImageUseCase(imagePath);
-      
-      // Variable para controlar el flujo dentro del fold
-      bool uploadSuccess = true;
-
-      uploadResult.fold(
+      final imageResult = await uploadArticleImageUseCase(imagePath);
+      final wasImageSuccessful = imageResult.fold(
         (error) {
-          emit(state.copyWith(isLoading: false, errorMessage: "Error subiendo imagen: $error"));
-          uploadSuccess = false;
+          emit(
+              state.copyWith(isLoading: false, errorMessage: error.toString()));
+          return false;
         },
         (url) {
-          finalThumbnailUrl = url; // ¡Guardamos la URL de Firebase!
+          imageUrl = url;
+          return true;
         },
       );
-
-      if (!uploadSuccess) return; // Si falló la imagen, no seguimos.
+      if (!wasImageSuccessful) return;
     }
 
-    // 2. Crear el artículo con la URL final
-    final articleWithImage = ArticleEntity(
-      articleId: article.articleId,
-      title: article.title,
-      content: article.content,
-      authorName: article.authorName,
-      authorUID: article.authorUID,
-      category: article.category,
-      datePublished: article.datePublished,
-      thumbnailURL: finalThumbnailUrl, 
-      isPublished: article.isPublished,
-    );
+    final finalArticle = article.copyWith(thumbnailURL: imageUrl);
 
-    final createResult = await createArticleUseCase(articleWithImage);
-
-    createResult.fold(
-      (failure) {
-        emit(state.copyWith(
-          isLoading: false,
-          errorMessage: failure.toString(),
-          isSuccess: false,
-        ));
-      },
-      (success) {
-        emit(state.copyWith(isLoading: false, isSuccess: true));
-      },
+    final articleResult = await createArticleUseCase(finalArticle);
+    articleResult.fold(
+      (error) => emit(
+          state.copyWith(isLoading: false, errorMessage: error.toString())),
+      (success) => emit(state.copyWith(isLoading: false, isSuccess: true)),
     );
   }
 }

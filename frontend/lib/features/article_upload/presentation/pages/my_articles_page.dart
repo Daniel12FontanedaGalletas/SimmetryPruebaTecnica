@@ -4,7 +4,6 @@ import 'package:news_app_clean_architecture/features/article_upload/domain/entit
 import 'package:news_app_clean_architecture/features/article_upload/presentation/bloc/my_articles_cubit.dart';
 import 'package:news_app_clean_architecture/features/article_upload/presentation/pages/article_creation_page.dart';
 
-// Imports necesarios para cruzar datos
 import 'package:news_app_clean_architecture/features/daily_news/domain/entities/article.dart'
     as daily;
 import 'package:news_app_clean_architecture/features/daily_news/presentation/bloc/article/remote/remote_article_bloc.dart';
@@ -13,9 +12,7 @@ import 'package:news_app_clean_architecture/features/daily_news/presentation/blo
 class MyArticlesPage extends StatelessWidget {
   const MyArticlesPage({Key? key}) : super(key: key);
 
-  // 💡 NUEVA FUNCIÓN: Enviar al Bloc de Daily News
   void _sendToMain(BuildContext context, ArticleEntity firebaseArticle) {
-    // Convertir Entidad Firebase -> Entidad Daily News
     final dailyArticle = daily.ArticleEntity(
       id: firebaseArticle.articleId.hashCode,
       author: firebaseArticle.authorName,
@@ -26,7 +23,6 @@ class MyArticlesPage extends StatelessWidget {
       content: firebaseArticle.content,
     );
 
-    // Disparar evento al Bloc Global
     context.read<RemoteArticlesBloc>().add(AddCustomArticle(dailyArticle));
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -37,7 +33,6 @@ class MyArticlesPage extends StatelessWidget {
   }
 
   void _deleteArticle(BuildContext context, String id) {
-    // (Mismo código de borrado que tenías...)
     showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -58,7 +53,6 @@ class MyArticlesPage extends StatelessWidget {
   }
 
   void _editArticle(BuildContext context, ArticleEntity article) async {
-    // (Mismo código de edición...)
     await Navigator.push(
         context,
         MaterialPageRoute(
@@ -84,8 +78,9 @@ class MyArticlesPage extends StatelessWidget {
       ),
       body: BlocBuilder<MyArticlesCubit, MyArticlesState>(
         builder: (context, state) {
-          if (state is MyArticlesLoading)
+          if (state is MyArticlesLoading) {
             return const Center(child: CircularProgressIndicator());
+          }
           if (state is MyArticlesLoaded) {
             return ListView.builder(
               itemCount: state.articles.length,
@@ -142,7 +137,6 @@ class MyArticlesPage extends StatelessWidget {
                           alignment: MainAxisAlignment.end,
                           spacing: 8,
                           children: [
-                            // 💡 BOTÓN MODIFICADO: "Guardar en Principal"
                             TextButton.icon(
                               icon: const Icon(Icons.send, color: Colors.blue),
                               label: const Text("Publicar",

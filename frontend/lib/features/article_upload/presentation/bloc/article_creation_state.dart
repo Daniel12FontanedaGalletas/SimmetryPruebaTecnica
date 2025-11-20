@@ -1,15 +1,8 @@
-// frontend/lib/features/article_upload/presentation/bloc/article_creation_state.dart
-
 import 'package:equatable/equatable.dart';
 
 class ArticleCreationState extends Equatable {
-  // Indica si se está realizando una operación (ej. subiendo el artículo).
   final bool isLoading;
-  
-  // Contiene un mensaje si ocurre un error.
   final String? errorMessage;
-  
-  // Indica si la operación de creación fue exitosa.
   final bool isSuccess;
 
   const ArticleCreationState({
@@ -18,7 +11,6 @@ class ArticleCreationState extends Equatable {
     this.isSuccess = false,
   });
 
-  // Método copyWith para generar nuevos estados inmutables.
   ArticleCreationState copyWith({
     bool? isLoading,
     String? errorMessage,
