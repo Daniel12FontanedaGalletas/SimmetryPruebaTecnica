@@ -113,45 +113,92 @@ class ArticleWidget extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            // Save Button
-            if (!isRemovable && onSave != null)
-              GestureDetector(
-                onTap: () => onSave!(article!),
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.bookmark_border,
-                          color: Colors.white, size: 16),
-                      SizedBox(width: 6),
-                      Text(
-                        "GUARDAR",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                // Save Button
+                if (!isRemovable && onSave != null)
+                  GestureDetector(
+                    onTap: () => onSave!(article!),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                    ],
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.bookmark_border,
+                              color: Colors.white, size: 16),
+                          SizedBox(width: 6),
+                          Text(
+                            "GUARDAR",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            if (isRemovable)
-              GestureDetector(
-                onTap: _onRemove,
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Icon(Icons.remove_circle_outline, color: Colors.red),
-                  ],
-                ),
-              ),
+
+                // Espacio entre botones
+                if (!isRemovable &&
+                    article?.url == null &&
+                    onRemove != null &&
+                    onSave != null)
+                  const SizedBox(width: 8),
+
+                // Botón para eliminar artículos propios en la vista global
+                if (!isRemovable && article?.url == null && onRemove != null)
+                  GestureDetector(
+                    onTap: () => onRemove!(article!),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: Colors.redAccent,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.delete_outline,
+                              color: Colors.white, size: 16),
+                          SizedBox(width: 6),
+                          Text(
+                            "ELIMINAR",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                if (isRemovable)
+                  GestureDetector(
+                    onTap: () {
+                      if (onRemove != null) {
+                        onRemove!(article!);
+                      }
+                    },
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Icon(Icons.remove_circle_outline, color: Colors.red),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
           ],
         ),
       ),

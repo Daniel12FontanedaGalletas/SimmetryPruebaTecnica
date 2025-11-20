@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:news_app_clean_architecture/features/daily_news/presentation/bloc/article/remote/remote_article_bloc.dart';
+import 'package:news_app_clean_architecture/features/daily_news/presentation/bloc/article/remote/remote_article_event.dart';
 import 'package:news_app_clean_architecture/features/daily_news/presentation/bloc/article/remote/remote_article_state.dart';
 import 'package:news_app_clean_architecture/features/daily_news/domain/usecases/save_article.dart';
 import '../../../domain/entities/article.dart';
@@ -165,6 +166,12 @@ class _DailyNewsState extends State<DailyNews> {
                   onArticlePressed: (article) => Navigator.pushNamed(
                       context, '/ArticleDetails',
                       arguments: article),
+                  onRemove: (article) {
+                    setState(() {
+                      articles.remove(article);
+                      _filteredArticles.remove(article);
+                    });
+                  },
                   // 💡 LÓGICA DEL BOTÓN FAVORITO
                   onSave: (article) async {
                     try {

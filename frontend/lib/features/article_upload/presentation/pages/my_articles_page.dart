@@ -112,7 +112,7 @@ class MyArticlesPage extends StatelessWidget {
                                       Border.all(color: Colors.black, width: 2),
                                   image: DecorationImage(
                                     image: NetworkImage(article.thumbnailURL),
-                                    fit: BoxFit.cover,
+                                    fit: BoxFit.contain,
                                   ),
                                 ),
                               )

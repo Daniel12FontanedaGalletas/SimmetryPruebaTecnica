@@ -20,3 +20,11 @@ class AddCustomArticle extends RemoteArticlesEvent {
   @override
   List<Object> get props => [article];
 }
+
+class RemoveArticle extends RemoteArticlesEvent {
+  final ArticleEntity article;
+  const RemoveArticle(this.article);
+
+  @override
+  List<Object> get props => [article];
+}
