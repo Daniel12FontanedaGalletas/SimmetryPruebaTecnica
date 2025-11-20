@@ -10,6 +10,9 @@ class RemoteArticlesBloc
     extends Bloc<RemoteArticlesEvent, RemoteArticlesState> {
   final GetArticleUseCase _getArticleUseCase;
 
+  // Lista para mantener los artículos añadidos por el usuario
+  final List<ArticleEntity> _userAddedArticles = [];
+
   RemoteArticlesBloc(this._getArticleUseCase)
       : super(const RemoteArticlesLoading()) {
     on<GetArticles>(onGetArticles);
@@ -19,7 +22,8 @@ class RemoteArticlesBloc
 
   void onGetArticles(
       GetArticles event, Emitter<RemoteArticlesState> emit) async {
-    final dataState = await _getArticleUseCase();
+    emit(const RemoteArticlesLoading());
+    final dataState = await _getArticleUseCase(params: event.category);
 
     if (dataState is DataSuccess && dataState.data!.isNotEmpty) {
       // Lógica para eliminar duplicados de la carga inicial
@@ -32,7 +36,14 @@ class RemoteArticlesBloc
           uniqueArticles.add(article);
         }
       }
-      emit(RemoteArticlesDone(uniqueArticles));
+
+      // Si la categoría es "general" o nula, añadimos los artículos del usuario
+      if (event.category == 'general' || event.category == null) {
+        final combinedList = [..._userAddedArticles, ...uniqueArticles];
+        emit(RemoteArticlesDone(combinedList));
+      } else {
+        emit(RemoteArticlesDone(uniqueArticles));
+      }
     } else if (dataState is DataFailed) {
       print(dataState.error);
       emit(RemoteArticlesError(dataState.error!));
@@ -41,26 +52,37 @@ class RemoteArticlesBloc
 
   void onAddCustomArticle(
       AddCustomArticle event, Emitter<RemoteArticlesState> emit) {
+    // Comprobar duplicados en la lista interna de artículos de usuario
+    final isDuplicateInUserList = _userAddedArticles
+        .any((article) => article.title == event.article.title);
+    if (!isDuplicateInUserList) {
+      _userAddedArticles.insert(0, event.article);
+    }
+
     if (state is RemoteArticlesDone) {
       final currentList = List<ArticleEntity>.from(state.articles!);
 
-      // Comprobar si ya existe un artículo con el mismo título
-      final isDuplicate =
+      // Comprobar si ya existe en la lista que se está mostrando
+      final isDuplicateInCurrentList =
           currentList.any((article) => article.title == event.article.title);
 
-      if (!isDuplicate) {
+      if (!isDuplicateInCurrentList) {
         currentList.insert(0, event.article);
         emit(RemoteArticlesDone(currentList));
       }
-      // Si es un duplicado, no hacemos nada y el estado no cambia.
     }
   }
 
   void onRemoveArticle(RemoveArticle event, Emitter<RemoteArticlesState> emit) {
+    // Eliminar de la lista interna persistente
+    _userAddedArticles
+        .removeWhere((article) => article.title == event.article.title);
+
     if (state is RemoteArticlesDone) {
       final currentList = List<ArticleEntity>.from(state.articles!);
       currentList.removeWhere((article) =>
-          article.id == event.article.id && article.url == event.article.url);
+          article.id == event.article.id &&
+          article.title == event.article.title);
       emit(RemoteArticlesDone(currentList));
     }
   }

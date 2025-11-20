@@ -7,10 +7,11 @@ abstract class RemoteArticlesEvent extends Equatable {
 }
 
 class GetArticles extends RemoteArticlesEvent {
-  const GetArticles();
+  final String? category;
+  const GetArticles({this.category});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [category ?? ''];
 }
 
 class AddCustomArticle extends RemoteArticlesEvent {

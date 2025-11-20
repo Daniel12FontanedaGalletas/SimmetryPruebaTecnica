@@ -20,6 +20,17 @@ class _DailyNewsState extends State<DailyNews> {
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
   List<ArticleEntity> _filteredArticles = [];
+  String? _selectedCategory;
+
+  final List<String> _categories = [
+    'general',
+    'business',
+    'technology',
+    'entertainment',
+    'sports',
+    'science',
+    'health'
+  ];
 
   @override
   void initState() {
@@ -87,7 +98,7 @@ class _DailyNewsState extends State<DailyNews> {
                   fontWeight: FontWeight.w900,
                   color: Colors.black),
             ),
-      centerTitle: !_isSearching,
+      centerTitle: true,
       actions: [
         IconButton(
           icon: Icon(_isSearching ? Icons.close : Icons.search,
@@ -137,60 +148,108 @@ class _DailyNewsState extends State<DailyNews> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: _buildAppbar(context),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black, width: 3),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Image.asset(
-                    'assets/images/header2.png',
+      body: RefreshIndicator(
+        onRefresh: () async {
+          context
+              .read<RemoteArticlesBloc>()
+              .add(GetArticles(category: _selectedCategory));
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildCategoryDropdown(),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12.0, vertical: 12.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black, width: 3),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: Image.asset(
+                      'assets/images/header2.png',
+                    ),
                   ),
                 ),
               ),
-            ),
-            ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: articles.length,
-              itemBuilder: (context, index) {
-                return ArticleWidget(
-                  article: articles[index],
-                  onArticlePressed: (article) => Navigator.pushNamed(
-                      context, '/ArticleDetails',
-                      arguments: article),
-                  onRemove: (article) {
-                    setState(() {
-                      articles.remove(article);
-                      _filteredArticles.remove(article);
-                    });
-                  },
-                  // 💡 LÓGICA DEL BOTÓN FAVORITO
-                  onSave: (article) async {
-                    try {
-                      await GetIt.instance<SaveArticleUseCase>()(
-                          params: article);
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text('✅ Guardado en Favoritos'),
-                          backgroundColor: Colors.green));
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text('⚠️ Ya estaba guardado'),
-                          backgroundColor: Colors.orange));
-                    }
-                  },
-                );
-              },
-            ),
-          ],
+              ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: articles.length,
+                itemBuilder: (context, index) {
+                  return ArticleWidget(
+                    article: articles[index],
+                    onArticlePressed: (article) => Navigator.pushNamed(
+                        context, '/ArticleDetails',
+                        arguments: article),
+                    onRemove: (article) {
+                      setState(() {
+                        articles.remove(article);
+                        _filteredArticles.remove(article);
+                      });
+                    },
+                    // 💡 LÓGICA DEL BOTÓN FAVORITO
+                    onSave: (article) async {
+                      try {
+                        await GetIt.instance<SaveArticleUseCase>()(
+                            params: article);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('✅ Guardado en Favoritos'),
+                                backgroundColor: Colors.green));
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('⚠️ Ya estaba guardado'),
+                                backgroundColor: Colors.orange));
+                      }
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryDropdown() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.black, width: 2),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: DropdownButton<String>(
+        value: _selectedCategory,
+        hint: const Text('TODAS LAS CATEGORÍAS'),
+        isExpanded: true,
+        underline: const SizedBox(),
+        items: [
+          const DropdownMenuItem<String>(
+            value: null,
+            child: Text('TODAS'),
+          ),
+          ..._categories.map((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value.toUpperCase()),
+            );
+          }).toList(),
+        ],
+        onChanged: (String? newValue) {
+          setState(() {
+            _selectedCategory = newValue;
+          });
+          context
+              .read<RemoteArticlesBloc>()
+              .add(GetArticles(category: newValue));
+        },
       ),
     );
   }
