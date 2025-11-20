@@ -8,8 +8,64 @@ import 'package:news_app_clean_architecture/features/daily_news/domain/usecases/
 import '../../../domain/entities/article.dart';
 import '../../widgets/article_tile.dart';
 
-class DailyNews extends StatelessWidget {
+class DailyNews extends StatefulWidget {
   const DailyNews({Key? key}) : super(key: key);
+
+  @override
+  State<DailyNews> createState() => _DailyNewsState();
+}
+
+class _DailyNewsState extends State<DailyNews> {
+  bool _isSearching = false;
+  final TextEditingController _searchController = TextEditingController();
+  List<ArticleEntity> _filteredArticles = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    final articles =
+        (context.read<RemoteArticlesBloc>().state as RemoteArticlesDone)
+            .articles!;
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      _filteredArticles = articles.where((article) {
+        return article.title?.toLowerCase().contains(query) ?? false;
+      }).toList();
+    });
+  }
+
+  void _toggleSearch() {
+    setState(() {
+      _isSearching = !_isSearching;
+      if (!_isSearching) {
+        _searchController.clear();
+      }
+    });
+  }
+
+  Widget _buildSearchField() {
+    return TextField(
+      controller: _searchController,
+      autofocus: true,
+      decoration: const InputDecoration(
+        hintText: 'Buscar artículo...',
+        border: InputBorder.none,
+        hintStyle: TextStyle(color: Colors.black54),
+      ),
+      style: const TextStyle(color: Colors.black, fontSize: 16),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,16 +76,23 @@ class DailyNews extends StatelessWidget {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
-      title: const Text(
-        'Symmetry News',
-        style: TextStyle(
-            fontFamily: 'Butler',
-            fontSize: 28,
-            fontWeight: FontWeight.w900,
-            color: Colors.black),
-      ),
-      centerTitle: true,
+      title: _isSearching
+          ? _buildSearchField()
+          : const Text(
+              'Symmetry News',
+              style: TextStyle(
+                  fontFamily: 'Butler',
+                  fontSize: 28,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.black),
+            ),
+      centerTitle: !_isSearching,
       actions: [
+        IconButton(
+          icon: Icon(_isSearching ? Icons.close : Icons.search,
+              color: Colors.black, size: 30),
+          onPressed: _toggleSearch,
+        ),
         GestureDetector(
           onTap: () => Navigator.pushNamed(context, '/SavedArticles'),
           child: Padding(
@@ -57,7 +120,11 @@ class DailyNews extends StatelessWidget {
               body: const Center(child: Icon(Icons.refresh)));
         }
         if (state is RemoteArticlesDone) {
-          return _buildArticlesPage(context, state.articles!);
+          if (_filteredArticles.isEmpty && _searchController.text.isEmpty) {
+            _filteredArticles = state.articles!;
+          }
+          return _buildArticlesPage(
+              context, _isSearching ? _filteredArticles : state.articles!);
         }
         return const SizedBox();
       },
