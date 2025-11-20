@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
     final List<Widget> widgetOptions = <Widget>[
       // Pestaña 0: Noticias Externas
       const DailyNews(),
-      
+
       // Pestaña 1: Tus Reportajes (Con Cubit inyectado)
       BlocProvider.value(
         value: _myArticlesCubit,
@@ -50,41 +50,52 @@ class _HomePageState extends State<HomePage> {
     ];
 
     return Scaffold(
-      body: Center(
-        child: widgetOptions.elementAt(_selectedIndex),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+                "assets/grid_background.png"), // Asegúrate de tener esta imagen
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(
+          child: widgetOptions.elementAt(_selectedIndex),
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.newspaper),
+            icon: Icon(Icons.movie_filter_outlined),
+            activeIcon: Icon(Icons.movie_filter),
             label: 'Noticias Globales',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_pin_circle_sharp),
+            icon: Icon(Icons.mic_none),
+            activeIcon: Icon(Icons.mic),
             label: 'Mis Reportajes',
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
+        type: BottomNavigationBarType.fixed,
       ),
       // El botón flotante solo aparece en tu pestaña
-      floatingActionButton: _selectedIndex == 1 
+      floatingActionButton: _selectedIndex == 1
           ? FloatingActionButton.extended(
               onPressed: () async {
                 await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ArticleCreationPage(articleToEdit: null)),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          const ArticleCreationPage(articleToEdit: null)),
                 );
                 // Refrescar la lista al volver de crear
                 _myArticlesCubit.loadArticles();
               },
               label: const Text("Redactar"),
               icon: const Icon(Icons.edit),
-              backgroundColor: Colors.black,
             )
-          : null, 
+          : null,
     );
   }
 }

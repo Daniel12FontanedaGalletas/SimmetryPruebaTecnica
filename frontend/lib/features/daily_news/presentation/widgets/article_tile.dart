@@ -19,7 +19,7 @@ class ArticleWidget extends StatelessWidget {
     this.isRemovable = false, // Valor por defecto
     this.onRemove,
     this.onSave,
-  }): super(key: key);
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,120 +27,133 @@ class ArticleWidget extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onTap: _onTap,
       child: Container(
-        padding: const EdgeInsetsDirectional.only(start: 14, end: 14, bottom: 7, top: 7),
-        height: MediaQuery.of(context).size.width / 2.2,
-        child: Row(
-          children: [
-            _buildImage(context),
-            _buildTitleAndDescription(),
-            _buildRemovableArea(),
-          ],
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: const Color(0xFF2C2C2C),
+          border: Border.all(color: Colors.black.withOpacity(0.5), width: 2),
+          borderRadius: BorderRadius.circular(4),
+          image: const DecorationImage(
+            image: AssetImage(
+                'assets/film_strip_border.png'), // Asegúrate de tener esta imagen
+            fit: BoxFit.fill,
+            repeat: ImageRepeat.noRepeat,
+          ),
+        ),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildImage(context),
+              _buildTitleAndDescription(context),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildImage(BuildContext context) {
-    return CachedNetworkImage(
-      imageUrl: article!.urlToImage ?? '',
-      imageBuilder: (context, imageProvider) => Padding(
-        padding: const EdgeInsetsDirectional.only(end: 14),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20.0),
-          child: Container(
-            width: MediaQuery.of(context).size.width / 3,
-            height: double.maxFinite,
+    return Container(
+      width: MediaQuery.of(context).size.width / 3.5,
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/film_strip_single.png'), // Y esta
+          fit: BoxFit.fill,
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      child: ClipRRect(
+        child: CachedNetworkImage(
+          imageUrl: article!.urlToImage ?? '',
+          fit: BoxFit.cover,
+          imageBuilder: (context, imageProvider) => Container(
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.08),
               image: DecorationImage(
                 image: imageProvider,
-                fit: BoxFit.cover
+                fit: BoxFit.cover,
               ),
             ),
           ),
-        ),
-      ),
-      progressIndicatorBuilder: (context, url, downloadProgress) => Padding(
-        padding: const EdgeInsetsDirectional.only(end: 14),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20.0),
-          child: Container(
-            width: MediaQuery.of(context).size.width / 3,
-            height: double.maxFinite,
-            child: const CupertinoActivityIndicator(),
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.08),
-            ),
-          ),
-        ),
-      ),
-      errorWidget: (context, url, error) => Padding(
-        padding: const EdgeInsetsDirectional.only(end: 14),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20.0),
-          child: Container(
-            width: MediaQuery.of(context).size.width / 3,
-            height: double.maxFinite,
-            child: const Icon(Icons.error),
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.08),
-            ),
-          ),
+          progressIndicatorBuilder: (context, url, downloadProgress) =>
+              const Center(
+                  child: CupertinoActivityIndicator(color: Colors.white)),
+          errorWidget: (context, url, error) =>
+              const Icon(Icons.image_not_supported, color: Colors.grey),
         ),
       ),
     );
   }
 
-  Widget _buildTitleAndDescription() {
+  Widget _buildTitleAndDescription(BuildContext context) {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 7),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const Text(
+              "D. ROLLEI VOLENS",
+              style: TextStyle(fontSize: 8, color: Colors.grey),
+            ),
+            const SizedBox(height: 8),
             // Title
             Text(
-              article!.title ?? '',
-              maxLines: 3,
+              (article!.title ?? '').toUpperCase(),
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontFamily: 'Butler',
+                fontFamily:
+                    'Butler', // O una fuente más condensada y en negrita
                 fontWeight: FontWeight.w900,
-                fontSize: 18,
-                color: Colors.black87,
+                fontSize: 20,
+                color: Colors.white,
+                height: 1.1,
               ),
             ),
-
+            const SizedBox(height: 8),
             // Description
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Text(
-                  article!.description ?? '',
-                  maxLines: 2,
-                ),
+              child: Text(
+                article!.description ?? '',
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 12, color: Color(0xFFC7C7C7)),
               ),
             ),
-
-            // Datetime
-            Row(
-              children: [
-                const Icon(Icons.timeline_outlined, size: 16),
-                const SizedBox(width: 4),
-                Text(
-                  article!.publishedAt ?? '',
-                  style: const TextStyle(fontSize: 12),
+            const SizedBox(height: 8),
+            // Save Button
+            if (!isRemovable && onSave != null)
+              GestureDetector(
+                onTap: () => onSave!(article!),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    const Icon(Icons.bookmark_border,
+                        color: Color(0xFF4A90E2), size: 28),
+                    const SizedBox(width: 4),
+                    Text(
+                      "GUARDAR EN\nFAVORITOS",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: const Color(0xFF4A90E2),
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
-                const Spacer(),
-                // 💡 BOTÓN FAVORITOS (Ahora funciona porque isRemovable es bool seguro)
-                if (!isRemovable && onSave != null)
-                   GestureDetector(
-                     onTap: () => onSave!(article!),
-                     child: const Icon(Icons.bookmark_add_outlined, color: Colors.blue),
-                   ),
-              ],
-            ),
+              ),
+            if (isRemovable)
+              GestureDetector(
+                onTap: _onRemove,
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Icon(Icons.remove_circle_outline, color: Colors.red),
+                  ],
+                ),
+              ),
           ],
         ),
       ),
@@ -148,15 +161,7 @@ class ArticleWidget extends StatelessWidget {
   }
 
   Widget _buildRemovableArea() {
-    if (isRemovable) {
-      return GestureDetector(
-        onTap: _onRemove,
-        child: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8),
-          child: Icon(Icons.remove_circle_outline, color: Colors.red),
-        ),
-      );
-    }
+    // This is now handled inside _buildTitleAndDescription to match the layout.
     return Container();
   }
 
