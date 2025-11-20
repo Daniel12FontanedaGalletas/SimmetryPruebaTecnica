@@ -18,6 +18,7 @@ class DailyNews extends StatelessWidget {
 
   _buildAppbar(BuildContext context) {
     return AppBar(
+      backgroundColor: Colors.transparent,
       title: const Text('Noticias Globales'),
       actions: [
         GestureDetector(
@@ -36,11 +37,13 @@ class DailyNews extends StatelessWidget {
       builder: (context, state) {
         if (state is RemoteArticlesLoading) {
           return Scaffold(
+              backgroundColor: Colors.transparent,
               appBar: _buildAppbar(context),
               body: const Center(child: CupertinoActivityIndicator()));
         }
         if (state is RemoteArticlesError) {
           return Scaffold(
+              backgroundColor: Colors.transparent,
               appBar: _buildAppbar(context),
               body: const Center(child: Icon(Icons.refresh)));
         }
@@ -55,12 +58,17 @@ class DailyNews extends StatelessWidget {
   Widget _buildArticlesPage(
       BuildContext context, List<ArticleEntity> articles) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: _buildAppbar(context),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Image.asset(
-                'assets/images/header.png'), // Asegúrate de tener esta imagen
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+              child: Image.asset(
+                  'assets/images/header.png'), // Asegúrate de tener esta imagen
+            ),
             ListView.builder(
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,

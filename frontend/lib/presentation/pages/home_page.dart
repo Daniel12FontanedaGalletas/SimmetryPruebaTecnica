@@ -50,8 +50,16 @@ class _HomePageState extends State<HomePage> {
     ];
 
     return Scaffold(
-      body: Center(
-        child: widgetOptions.elementAt(_selectedIndex),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/fondoo.png"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(
+          child: widgetOptions.elementAt(_selectedIndex),
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
