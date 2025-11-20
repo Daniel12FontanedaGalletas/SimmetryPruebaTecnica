@@ -114,13 +114,20 @@ class ArticleWidget extends StatelessWidget {
             if (!isRemovable && onSave != null)
               GestureDetector(
                 onTap: () => onSave!(article!),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Icon(Icons.bookmark_border,
-                        color: Color(0xFF4A90E2), size: 28),
-                    SizedBox(width: 4),
-                    Text(
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.9),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Icon(Icons.bookmark_border,
+                          color: Colors.black, size: 20),
+                    ),
+                    const SizedBox(width: 8),
+                    const Text(
                       "GUARDAR EN\nFAVORITOS",
                       textAlign: TextAlign.center,
                       style: TextStyle(

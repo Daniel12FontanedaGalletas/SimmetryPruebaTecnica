@@ -23,9 +23,16 @@ class DailyNews extends StatelessWidget {
       actions: [
         GestureDetector(
           onTap: () => Navigator.pushNamed(context, '/SavedArticles'),
-          child: const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 14),
-            child: Icon(Icons.bookmark),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.9),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.bookmark, color: Colors.black, size: 20),
+            ),
           ),
         ),
       ],
