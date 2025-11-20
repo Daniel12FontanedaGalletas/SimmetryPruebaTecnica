@@ -65,9 +65,19 @@ class DailyNews extends StatelessWidget {
           children: [
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-              child: Image.asset(
-                  'assets/images/header.png'), // Asegúrate de tener esta imagen
+                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: SizedBox(
+                  height: 400,
+                  width: double.infinity,
+                  child: Image.asset(
+                    'assets/images/header.png',
+                    fit: BoxFit.cover,
+                    alignment: Alignment.center,
+                  ),
+                ),
+              ),
             ),
             ListView.builder(
               physics: const NeverScrollableScrollPhysics(),
