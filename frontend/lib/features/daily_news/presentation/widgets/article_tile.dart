@@ -33,12 +33,6 @@ class ArticleWidget extends StatelessWidget {
           color: const Color(0xFF2C2C2C),
           border: Border.all(color: Colors.black.withOpacity(0.5), width: 2),
           borderRadius: BorderRadius.circular(4),
-          image: const DecorationImage(
-            image: AssetImage(
-                'assets/film_strip_border.png'), // Asegúrate de tener esta imagen
-            fit: BoxFit.fill,
-            repeat: ImageRepeat.noRepeat,
-          ),
         ),
         child: IntrinsicHeight(
           child: Row(
@@ -56,12 +50,6 @@ class ArticleWidget extends StatelessWidget {
   Widget _buildImage(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width / 3.5,
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/film_strip_single.png'), // Y esta
-          fit: BoxFit.fill,
-        ),
-      ),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
       child: ClipRRect(
         child: CachedNetworkImage(
@@ -126,17 +114,17 @@ class ArticleWidget extends StatelessWidget {
             if (!isRemovable && onSave != null)
               GestureDetector(
                 onTap: () => onSave!(article!),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Icon(Icons.bookmark_border,
+                    Icon(Icons.bookmark_border,
                         color: Color(0xFF4A90E2), size: 28),
-                    const SizedBox(width: 4),
+                    SizedBox(width: 4),
                     Text(
                       "GUARDAR EN\nFAVORITOS",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: const Color(0xFF4A90E2),
+                        color: Color(0xFF4A90E2),
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
                       ),

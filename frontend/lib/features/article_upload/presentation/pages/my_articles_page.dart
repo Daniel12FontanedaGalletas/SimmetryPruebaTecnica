@@ -5,7 +5,8 @@ import 'package:news_app_clean_architecture/features/article_upload/presentation
 import 'package:news_app_clean_architecture/features/article_upload/presentation/pages/article_creation_page.dart';
 
 // Imports necesarios para cruzar datos
-import 'package:news_app_clean_architecture/features/daily_news/domain/entities/article.dart' as daily;
+import 'package:news_app_clean_architecture/features/daily_news/domain/entities/article.dart'
+    as daily;
 import 'package:news_app_clean_architecture/features/daily_news/presentation/bloc/article/remote/remote_article_bloc.dart';
 import 'package:news_app_clean_architecture/features/daily_news/presentation/bloc/article/remote/remote_article_event.dart';
 
@@ -29,29 +30,39 @@ class MyArticlesPage extends StatelessWidget {
     context.read<RemoteArticlesBloc>().add(AddCustomArticle(dailyArticle));
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('🚀 Enviado a la portada de Noticias Globales'), backgroundColor: Colors.blueAccent),
+      const SnackBar(
+          content: Text('🚀 Enviado a la portada de Noticias Globales'),
+          backgroundColor: Colors.blueAccent),
     );
   }
 
   void _deleteArticle(BuildContext context, String id) {
-     // (Mismo código de borrado que tenías...)
-     showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text("¿Eliminar?"),
-        actions: [
-          TextButton(onPressed: ()=>Navigator.pop(ctx), child: const Text("No")),
-          TextButton(onPressed: () {
-             Navigator.pop(ctx);
-             context.read<MyArticlesCubit>().deleteArticle(id);
-          }, child: const Text("Sí", style: TextStyle(color: Colors.red))),
-        ],
-      ));
+    // (Mismo código de borrado que tenías...)
+    showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+              title: const Text("¿Eliminar?"),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(ctx),
+                    child: const Text("No")),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      context.read<MyArticlesCubit>().deleteArticle(id);
+                    },
+                    child:
+                        const Text("Sí", style: TextStyle(color: Colors.red))),
+              ],
+            ));
   }
 
   void _editArticle(BuildContext context, ArticleEntity article) async {
     // (Mismo código de edición...)
-    await Navigator.push(context, MaterialPageRoute(builder: (_) => ArticleCreationPage(articleToEdit: article)));
+    await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => ArticleCreationPage(articleToEdit: article)));
     context.read<MyArticlesCubit>().loadArticles();
   }
 
@@ -59,14 +70,16 @@ class MyArticlesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Mis Reportajes", style: TextStyle(color: Colors.black)),
+        title:
+            const Text("Mis Reportajes", style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: BlocBuilder<MyArticlesCubit, MyArticlesState>(
         builder: (context, state) {
-          if (state is MyArticlesLoading) return const Center(child: CircularProgressIndicator());
+          if (state is MyArticlesLoading)
+            return const Center(child: CircularProgressIndicator());
           if (state is MyArticlesLoaded) {
             return ListView.builder(
               itemCount: state.articles.length,
@@ -77,15 +90,26 @@ class MyArticlesPage extends StatelessWidget {
                   child: Column(
                     children: [
                       ListTile(
-                        leading: article.thumbnailURL.isNotEmpty ? Image.network(article.thumbnailURL, width: 60, fit: BoxFit.cover, errorBuilder: (c,e,s)=>const Icon(Icons.error)) : const Icon(Icons.article),
-                        title: Text(article.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        leading: article.thumbnailURL.isNotEmpty
+                            ? Image.network(article.thumbnailURL,
+                                width: 60,
+                                fit: BoxFit.cover,
+                                errorBuilder: (c, e, s) =>
+                                    const Icon(Icons.error))
+                            : const Icon(Icons.article),
+                        title: Text(article.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
                       ),
-                      ButtonBar(
+                      OverflowBar(
                         alignment: MainAxisAlignment.end,
                         children: [
                           // 💡 BOTÓN MODIFICADO: "Guardar en Principal"
                           TextButton.icon(
-                            icon: const Icon(Icons.send_to_mobile, color: Colors.indigo),
+                            icon: const Icon(Icons.send_to_mobile,
+                                color: Colors.indigo),
                             label: const Text("Guardar en Principal"),
                             onPressed: () => _sendToMain(context, article),
                           ),
@@ -95,7 +119,8 @@ class MyArticlesPage extends StatelessWidget {
                           ),
                           IconButton(
                             icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () => _deleteArticle(context, article.articleId),
+                            onPressed: () =>
+                                _deleteArticle(context, article.articleId),
                           ),
                         ],
                       )

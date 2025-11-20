@@ -50,17 +50,8 @@ class _HomePageState extends State<HomePage> {
     ];
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(
-                "assets/grid_background.png"), // Asegúrate de tener esta imagen
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Center(
-          child: widgetOptions.elementAt(_selectedIndex),
-        ),
+      body: Center(
+        child: widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

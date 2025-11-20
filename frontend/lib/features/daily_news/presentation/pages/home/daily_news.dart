@@ -18,13 +18,13 @@ class DailyNews extends StatelessWidget {
 
   _buildAppbar(BuildContext context) {
     return AppBar(
-      title: const Text('Daily News', style: TextStyle(color: Colors.black)),
+      title: const Text('Noticias Globales'),
       actions: [
         GestureDetector(
           onTap: () => Navigator.pushNamed(context, '/SavedArticles'),
           child: const Padding(
             padding: EdgeInsets.symmetric(horizontal: 14),
-            child: Icon(Icons.bookmark, color: Colors.black),
+            child: Icon(Icons.bookmark),
           ),
         ),
       ],
@@ -35,10 +35,14 @@ class DailyNews extends StatelessWidget {
     return BlocBuilder<RemoteArticlesBloc, RemoteArticlesState>(
       builder: (context, state) {
         if (state is RemoteArticlesLoading) {
-          return Scaffold(appBar: _buildAppbar(context), body: const Center(child: CupertinoActivityIndicator()));
+          return Scaffold(
+              appBar: _buildAppbar(context),
+              body: const Center(child: CupertinoActivityIndicator()));
         }
         if (state is RemoteArticlesError) {
-          return Scaffold(appBar: _buildAppbar(context), body: const Center(child: Icon(Icons.refresh)));
+          return Scaffold(
+              appBar: _buildAppbar(context),
+              body: const Center(child: Icon(Icons.refresh)));
         }
         if (state is RemoteArticlesDone) {
           return _buildArticlesPage(context, state.articles!);
@@ -48,30 +52,44 @@ class DailyNews extends StatelessWidget {
     );
   }
 
-  Widget _buildArticlesPage(BuildContext context, List<ArticleEntity> articles) {
+  Widget _buildArticlesPage(
+      BuildContext context, List<ArticleEntity> articles) {
     return Scaffold(
       appBar: _buildAppbar(context),
-      body: ListView.builder(
-        itemCount: articles.length,
-        itemBuilder: (context, index) {
-          return ArticleWidget(
-            article: articles[index],
-            onArticlePressed: (article) => Navigator.pushNamed(context, '/ArticleDetails', arguments: article),
-            // 💡 LÓGICA DEL BOTÓN FAVORITO
-            onSave: (article) async {
-              try {
-                await GetIt.instance<SaveArticleUseCase>()(params: article);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('✅ Guardado en Favoritos'), backgroundColor: Colors.green)
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Image.asset(
+                'assets/images/header.png'), // Asegúrate de tener esta imagen
+            ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: articles.length,
+              itemBuilder: (context, index) {
+                return ArticleWidget(
+                  article: articles[index],
+                  onArticlePressed: (article) => Navigator.pushNamed(
+                      context, '/ArticleDetails',
+                      arguments: article),
+                  // 💡 LÓGICA DEL BOTÓN FAVORITO
+                  onSave: (article) async {
+                    try {
+                      await GetIt.instance<SaveArticleUseCase>()(
+                          params: article);
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('✅ Guardado en Favoritos'),
+                          backgroundColor: Colors.green));
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('⚠️ Ya estaba guardado'),
+                          backgroundColor: Colors.orange));
+                    }
+                  },
                 );
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('⚠️ Ya estaba guardado'), backgroundColor: Colors.orange)
-                );
-              }
-            },
-          );
-        },
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
