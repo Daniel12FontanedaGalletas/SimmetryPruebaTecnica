@@ -50,18 +50,15 @@ class _HomePageState extends State<HomePage> {
     ];
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/fondoo.png"),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Center(
-          child: widgetOptions.elementAt(_selectedIndex),
-        ),
+      backgroundColor:
+          const Color(0xFFFDF5E6), // Color crema estilo papel antiguo
+      body: Center(
+        child: widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color(0xFFFDF5E6),
+        selectedItemColor: Colors.black,
+        unselectedItemColor: Colors.black54,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.movie_filter_outlined),

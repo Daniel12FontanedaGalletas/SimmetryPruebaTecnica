@@ -71,8 +71,13 @@ class MyArticlesPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title:
-            const Text("Mis Reportajes", style: TextStyle(color: Colors.black)),
+        title: const Text("Mis Reportajes",
+            style: TextStyle(
+                fontFamily: 'Butler',
+                fontSize: 28,
+                fontWeight: FontWeight.w900,
+                color: Colors.black)),
+        centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
@@ -87,43 +92,75 @@ class MyArticlesPage extends StatelessWidget {
               itemBuilder: (context, index) {
                 final article = state.articles[index];
                 return Card(
-                  margin: const EdgeInsets.all(10),
+                  color: const Color(0xFFF5F5DC),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    side: const BorderSide(color: Colors.black, width: 2),
+                  ),
+                  elevation: 0,
                   child: Column(
                     children: [
                       ListTile(
                         leading: article.thumbnailURL.isNotEmpty
-                            ? Image.network(article.thumbnailURL,
+                            ? Container(
                                 width: 60,
-                                fit: BoxFit.cover,
-                                errorBuilder: (c, e, s) =>
-                                    const Icon(Icons.error))
-                            : const Icon(Icons.article),
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: Colors.black, width: 2),
+                                  image: DecorationImage(
+                                    image: NetworkImage(article.thumbnailURL),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              )
+                            : Container(
+                                width: 60,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.1),
+                                  border:
+                                      Border.all(color: Colors.black, width: 2),
+                                ),
+                                child: const Icon(Icons.article,
+                                    color: Colors.black54),
+                              ),
                         title: Text(article.title,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style:
-                                const TextStyle(fontWeight: FontWeight.bold)),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black)),
+                        subtitle: Text(article.category,
+                            style: const TextStyle(color: Colors.black54)),
                       ),
-                      OverflowBar(
-                        alignment: MainAxisAlignment.end,
-                        children: [
-                          // 💡 BOTÓN MODIFICADO: "Guardar en Principal"
-                          TextButton.icon(
-                            icon: const Icon(Icons.send_to_mobile,
-                                color: Colors.indigo),
-                            label: const Text("Guardar en Principal"),
-                            onPressed: () => _sendToMain(context, article),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.orange),
-                            onPressed: () => _editArticle(context, article),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () =>
-                                _deleteArticle(context, article.articleId),
-                          ),
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8.0, bottom: 8.0),
+                        child: OverflowBar(
+                          alignment: MainAxisAlignment.end,
+                          spacing: 8,
+                          children: [
+                            // 💡 BOTÓN MODIFICADO: "Guardar en Principal"
+                            TextButton.icon(
+                              icon: const Icon(Icons.send, color: Colors.blue),
+                              label: const Text("Publicar",
+                                  style: TextStyle(color: Colors.blue)),
+                              onPressed: () => _sendToMain(context, article),
+                            ),
+                            IconButton(
+                              icon:
+                                  const Icon(Icons.edit, color: Colors.black87),
+                              onPressed: () => _editArticle(context, article),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () =>
+                                  _deleteArticle(context, article.articleId),
+                            ),
+                          ],
+                        ),
                       )
                     ],
                   ),

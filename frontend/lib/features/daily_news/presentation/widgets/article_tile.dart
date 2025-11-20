@@ -28,11 +28,10 @@ class ArticleWidget extends StatelessWidget {
       onTap: _onTap,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: const Color(0xFF2C2C2C),
-          border: Border.all(color: Colors.black.withOpacity(0.5), width: 2),
-          borderRadius: BorderRadius.circular(4),
+          color: const Color(0xFFF5F5DC), // Beige
+          border: Border.all(color: Colors.black, width: 3),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: IntrinsicHeight(
           child: Row(
@@ -48,10 +47,13 @@ class ArticleWidget extends StatelessWidget {
   }
 
   Widget _buildImage(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width / 3.5,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-      child: ClipRRect(
+    return Expanded(
+      flex: 2,
+      child: Container(
+        margin: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black, width: 2),
+        ),
         child: CachedNetworkImage(
           imageUrl: article!.urlToImage ?? '',
           fit: BoxFit.cover,
@@ -65,9 +67,11 @@ class ArticleWidget extends StatelessWidget {
           ),
           progressIndicatorBuilder: (context, url, downloadProgress) =>
               const Center(
-                  child: CupertinoActivityIndicator(color: Colors.white)),
-          errorWidget: (context, url, error) =>
-              const Icon(Icons.image_not_supported, color: Colors.grey),
+                  child: CupertinoActivityIndicator(color: Colors.black)),
+          errorWidget: (context, url, error) => Container(
+            color: Colors.black.withOpacity(0.1),
+            child: const Icon(Icons.image_not_supported, color: Colors.black54),
+          ),
         ),
       ),
     );
@@ -75,68 +79,67 @@ class ArticleWidget extends StatelessWidget {
 
   Widget _buildTitleAndDescription(BuildContext context) {
     return Expanded(
+      flex: 3,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              "D. ROLLEI VOLENS",
-              style: TextStyle(fontSize: 8, color: Colors.grey),
-            ),
-            const SizedBox(height: 8),
-            // Title
-            Text(
-              (article!.title ?? '').toUpperCase(),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontFamily:
-                    'Butler', // O una fuente más condensada y en negrita
-                fontWeight: FontWeight.w900,
-                fontSize: 20,
-                color: Colors.white,
-                height: 1.1,
-              ),
-            ),
-            const SizedBox(height: 8),
-            // Description
-            Expanded(
-              child: Text(
-                article!.description ?? '',
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 12, color: Color(0xFFC7C7C7)),
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title
+                Text(
+                  (article!.title ?? '').toUpperCase(),
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontFamily: 'Butler',
+                    fontWeight: FontWeight.w900,
+                    fontSize: 18,
+                    color: Colors.black,
+                    height: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // Description
+                Text(
+                  article!.description ?? '',
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 12, color: Colors.black87),
+                ),
+              ],
             ),
             const SizedBox(height: 8),
             // Save Button
             if (!isRemovable && onSave != null)
               GestureDetector(
                 onTap: () => onSave!(article!),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.9),
-                        borderRadius: BorderRadius.circular(4),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.bookmark_border,
+                          color: Colors.white, size: 16),
+                      SizedBox(width: 6),
+                      Text(
+                        "GUARDAR",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      child: const Icon(Icons.bookmark_border,
-                          color: Colors.black, size: 20),
-                    ),
-                    const SizedBox(width: 8),
-                    const Text(
-                      "GUARDAR EN\nFAVORITOS",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color(0xFF4A90E2),
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             if (isRemovable)
@@ -156,8 +159,10 @@ class ArticleWidget extends StatelessWidget {
   }
 
   Widget _buildRemovableArea() {
-    // This is now handled inside _buildTitleAndDescription to match the layout.
-    return Container();
+    return GestureDetector(
+      onTap: _onRemove,
+      child: const Icon(Icons.remove_circle_outline, color: Colors.red),
+    );
   }
 
   void _onTap() {

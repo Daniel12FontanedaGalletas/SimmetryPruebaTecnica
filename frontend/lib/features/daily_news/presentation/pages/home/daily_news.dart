@@ -19,20 +19,22 @@ class DailyNews extends StatelessWidget {
   _buildAppbar(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.transparent,
-      title: const Text('Noticias Globales'),
+      elevation: 0,
+      title: const Text(
+        'Symmetry News',
+        style: TextStyle(
+            fontFamily: 'Butler',
+            fontSize: 28,
+            fontWeight: FontWeight.w900,
+            color: Colors.black),
+      ),
+      centerTitle: true,
       actions: [
         GestureDetector(
           onTap: () => Navigator.pushNamed(context, '/SavedArticles'),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 14),
-            child: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.9),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.bookmark, color: Colors.black, size: 20),
-            ),
+            child: const Icon(Icons.bookmark, color: Colors.black, size: 30),
           ),
         ),
       ],
@@ -73,15 +75,15 @@ class DailyNews extends StatelessWidget {
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: SizedBox(
-                  height: 400,
-                  width: double.infinity,
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black, width: 3),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
                   child: Image.asset(
-                    'assets/images/header.png',
-                    fit: BoxFit.cover,
-                    alignment: Alignment.center,
+                    'assets/images/header2.png',
                   ),
                 ),
               ),
