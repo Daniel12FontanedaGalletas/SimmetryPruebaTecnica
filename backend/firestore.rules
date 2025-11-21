@@ -2,6 +2,39 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // TODO: WRITE ANY NECESSARY FIRESTORE RULES HERE
+
+    // Reglas específicas para la colección de artículos
+    match /articles/{articleId} {
+
+      // Cualquiera puede leer los artículos (lectura pública)
+      allow read: if true;
+
+      // Solo un usuario autenticado puede crear un artículo,
+      // y debe ser el autor del mismo.
+      allow create: if request.auth != null
+                    && request.resource.data.authorUID == request.auth.uid
+                    && isArticleDataValid(request.resource.data);
+
+      // Solo el autor original del artículo puede actualizarlo.
+      allow update: if request.auth != null
+                    && resource.data.authorUID == request.auth.uid
+                    && isArticleDataValid(request.resource.data);
+      
+      // Solo el autor original puede borrar su artículo.
+      allow delete: if request.auth != null 
+                    && resource.data.authorUID == request.auth.uid;
+    }
+
+    // Función para validar que los datos del artículo son correctos
+    function isArticleDataValid(data) {
+      return data.title is string && data.title.size() > 0
+          && data.content is string && data.content.size() > 0
+          && data.authorName is string
+          && data.authorUID is string
+          && data.category is string
+          && data.datePublished is string
+          && data.thumbnailURL is string
+          && data.isPublished is bool;
+    }
   }
 }
