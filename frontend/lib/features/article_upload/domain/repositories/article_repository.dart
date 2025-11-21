@@ -3,7 +3,9 @@ import 'package:news_app_clean_architecture/features/article_upload/domain/entit
 
 abstract class ArticleRepository {
   Future<Either<dynamic, ArticleEntity>> createArticle(ArticleEntity article);
-  Future<Either<dynamic, String>> uploadArticleImage(String imagePath);
+  // [MODIFICACIÓN] Se requiere el userId para Storage
+  Future<Either<dynamic, String>> uploadArticleImage(
+      String imagePath, String userId);
   Future<Either<dynamic, List<ArticleEntity>>> getUploadedArticles();
   Future<Either<dynamic, void>> deleteArticle(String articleId);
 }

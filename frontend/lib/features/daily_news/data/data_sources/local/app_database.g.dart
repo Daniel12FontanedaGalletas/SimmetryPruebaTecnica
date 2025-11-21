@@ -87,16 +87,8 @@ class _$ArticleDao extends ArticleDao {
         _articleModelInsertionAdapter = InsertionAdapter(
             database,
             'article',
-            (ArticleModel item) => <String, Object?>{
-                  'id': item.id,
-                  'author': item.author,
-                  'title': item.title,
-                  'description': item.description,
-                  'url': item.url,
-                  'urlToImage': item.urlToImage,
-                  'publishedAt': item.publishedAt,
-                  'content': item.content
-                }),
+            // [CORRECCIÓN] Usar el método toMap() para asegurar que el ID siempre exista.
+            (ArticleModel item) => item.toMap()),
         _articleModelDeletionAdapter = DeletionAdapter(
             database,
             'article',

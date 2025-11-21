@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
-import '../repositories/article_repository.dart';
+import '../repositories/article_repository.dart' as upload_repo;
 
 class DeleteArticleUseCase {
-  final ArticleRepository repository;
+  final upload_repo.ArticleRepository repository;
 
   DeleteArticleUseCase(this.repository);
 

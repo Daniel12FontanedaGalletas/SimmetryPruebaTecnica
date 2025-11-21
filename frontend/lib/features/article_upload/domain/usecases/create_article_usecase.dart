@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
 import '../entities/article_entity.dart';
-import '../repositories/article_repository.dart';
+import '../repositories/article_repository.dart' as upload_repo;
 
 class CreateArticleUseCase {
-  final ArticleRepository repository;
+  final upload_repo.ArticleRepository repository;
 
   CreateArticleUseCase(this.repository);
 

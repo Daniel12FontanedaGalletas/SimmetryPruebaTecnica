@@ -1,23 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:news_app_clean_architecture/features/article_upload/domain/entities/article_entity.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 
 class FirebaseArticleDatasource {
   final FirebaseFirestore firestore;
   final FirebaseStorage storage;
+  final FirebaseAuth auth;
   final String articlesCollection = 'articles';
   final String storageBucket = "symmetry-reporter-backend.firebasestorage.app";
 
-  FirebaseArticleDatasource({required this.firestore, required this.storage});
+  FirebaseArticleDatasource(
+      {required this.firestore, required this.storage, required this.auth});
 
   Future<String> uploadImage(String imagePath, String userId) async {
     final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
     final pathOnCloud = 'media/articles/$userId/$fileName';
 
-    if (Platform.isWindows) {
+    if (defaultTargetPlatform == TargetPlatform.windows) {
       return _uploadImageRestWindows(imagePath, pathOnCloud);
     }
 
@@ -36,6 +41,12 @@ class FirebaseArticleDatasource {
   Future<String> _uploadImageRestWindows(
       String imagePath, String pathOnCloud) async {
     try {
+      final user = auth.currentUser;
+      if (user == null) {
+        throw Exception('Usuario no autenticado.');
+      }
+      final idToken = await user.getIdToken();
+
       final file = File(imagePath);
       final bytes = await file.readAsBytes();
       final encodedPath = Uri.encodeComponent(pathOnCloud);
@@ -44,7 +55,10 @@ class FirebaseArticleDatasource {
 
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'image/jpeg'},
+        headers: {
+          'Content-Type': 'image/jpeg',
+          'Authorization': 'Bearer $idToken',
+        },
         body: bytes,
       );
 

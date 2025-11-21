@@ -1,10 +1,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:news_app_clean_architecture/features/article_upload/domain/entities/article_entity.dart';
-import 'package:news_app_clean_architecture/features/article_upload/domain/repositories/article_repository.dart';
+import 'package:news_app_clean_architecture/features/article_upload/domain/repositories/article_repository.dart'
+    as upload_repo;
 import '../datasources/firebase_article_datasource.dart';
 
-class ArticleRepositoryImpl implements ArticleRepository {
+class ArticleRepositoryImpl implements upload_repo.ArticleRepository {
   final FirebaseArticleDatasource datasource;
 
   ArticleRepositoryImpl({required this.datasource});
@@ -23,10 +24,12 @@ class ArticleRepositoryImpl implements ArticleRepository {
   }
 
   @override
-  Future<Either<dynamic, String>> uploadArticleImage(String imagePath) async {
-    const mockUserId = 'REPORTER_DANIEL_UID';
+  // [MODIFICACIÓN] Se recibe el userId y se usa en lugar del mock
+  Future<Either<dynamic, String>> uploadArticleImage(
+      String imagePath, String userId) async {
     try {
-      final url = await datasource.uploadImage(imagePath, mockUserId);
+      // Se elimina el hardcodeo del mockUserId
+      final url = await datasource.uploadImage(imagePath, userId);
       return Right(url);
     } catch (e) {
       return Left('Error al subir imagen: $e');

@@ -87,7 +87,9 @@ class _ArticleCreationViewState extends State<ArticleCreationView> {
         title: _titleController.text,
         content: _contentController.text,
         authorName: "Periodista Genio",
-        authorUID: "user_123_pro",
+        // [MODIFICACIÓN] Se elimina el hardcodeo de "user_123_pro".
+        // Si estamos editando, usamos el UID existente. Si creamos, usamos una cadena vacía, y el Cubit lo sobrescribirá.
+        authorUID: isEditing ? widget.articleToEdit!.authorUID : "",
         category: _categoryController.text.isNotEmpty
             ? _categoryController.text
             : "General",

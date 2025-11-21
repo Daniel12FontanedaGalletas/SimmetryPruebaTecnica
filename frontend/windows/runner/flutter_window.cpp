@@ -4,6 +4,9 @@
 
 #include "flutter/generated_plugin_registrant.h"
 
+// Include the Firebase C++ SDK header for firebase::App.
+#include <firebase/app.h>
+
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
     : project_(project) {}
 
@@ -25,6 +28,15 @@ bool FlutterWindow::OnCreate() {
     return false;
   }
   RegisterPlugins(flutter_controller_->engine());
+
+  // Explicitly initialize Firebase for Windows AFTER plugins are registered.
+  // This allows the firebase_core plugin to pass Dart options to the native side.
+  const firebase::App* app = firebase::App::Create();
+  if (app == nullptr) {
+    OutputDebugStringA("Error: Failed to initialize Firebase App.\n");
+    // We don't return false here, to allow the app to show a proper error UI.
+  }
+
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
 
   flutter_controller_->engine()->SetNextFrameCallback([&]() {

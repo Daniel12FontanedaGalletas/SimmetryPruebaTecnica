@@ -17,7 +17,8 @@ class ArticleRepositoryMockImpl implements ArticleRepository {
   }
 
   @override
-  Future<Either<dynamic, String>> uploadArticleImage(String imagePath) async {
+  Future<Either<dynamic, String>> uploadArticleImage(
+      String imagePath, String userId) async {
     return const Right("http://mock-url/image.jpg");
   }
 

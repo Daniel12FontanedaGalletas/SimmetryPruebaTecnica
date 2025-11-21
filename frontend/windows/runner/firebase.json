@@ -1,0 +1,28 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "symmetry-reporter-backend",
+          "appId": "1:227977661590:android:c581fe95dea8cc4e7f86b7",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "symmetry-reporter-backend",
+          "configurations": {
+            "android": "1:227977661590:android:c581fe95dea8cc4e7f86b7",
+            "ios": "1:227977661590:ios:fd9da54acb5c7f4b7f86b7",
+            "macos": "1:227977661590:ios:fd9da54acb5c7f4b7f86b7",
+            "web": "1:227977661590:web:d1f23cf37a8567c27f86b7",
+            "windows": "1:227977661590:web:d1f23cf37a8567c27f86b7"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "source": "."
+  }
+}
