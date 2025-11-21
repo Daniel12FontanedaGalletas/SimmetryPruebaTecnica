@@ -60,6 +60,8 @@ class ArticleCreationCubit extends Cubit<ArticleCreationState> {
     final finalArticle = article.copyWith(
       thumbnailURL: imageUrl,
       authorUID: userId,
+      // [CAMBIO] Actualizando el nombre del autor.
+      authorName: 'ElTerrorDeLosBizcochos123',
     );
 
     final articleResult = await createArticleUseCase(finalArticle);
