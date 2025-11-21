@@ -29,3 +29,4 @@ Furthermore, we will now leave the index of this project with all the documentat
 2. [Architecture Violations](./docs/ARCHITECTURE_VIOLATIONS.md)
 3. [Code Quality Violations](./docs/CODING_GUIDELINES.md)
 4. [Our App Architecture](./docs/APP_ARCHITECTURE.md)
+"## Prueba T‚cnica Terminada - Listo para revisi¢n" 
