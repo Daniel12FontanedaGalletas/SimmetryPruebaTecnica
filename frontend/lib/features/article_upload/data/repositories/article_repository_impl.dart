@@ -24,11 +24,9 @@ class ArticleRepositoryImpl implements upload_repo.ArticleRepository {
   }
 
   @override
-  // [MODIFICACIÓN] Se recibe el userId y se usa en lugar del mock
   Future<Either<dynamic, String>> uploadArticleImage(
       String imagePath, String userId) async {
     try {
-      // Se elimina el hardcodeo del mockUserId
       final url = await datasource.uploadImage(imagePath, userId);
       return Right(url);
     } catch (e) {

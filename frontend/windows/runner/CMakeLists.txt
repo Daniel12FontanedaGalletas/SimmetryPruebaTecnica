@@ -24,8 +24,6 @@ target_compile_definitions(${BINARY_NAME} PRIVATE "NOMINMAX")
 target_link_libraries(${BINARY_NAME} PRIVATE flutter flutter_wrapper_app)
 target_link_libraries(${BINARY_NAME} PRIVATE "dwmapi.lib")
 
-# [CORRECCIÓN] Enlazar contra los targets de los plugins de Flutter, no directamente contra los .lib.
-# Esto asegura que el enlazador encuentre las librerías de Firebase.
 target_link_libraries(${BINARY_NAME} PRIVATE
   cloud_firestore_plugin
   firebase_auth_plugin
@@ -36,6 +34,7 @@ target_link_libraries(${BINARY_NAME} PRIVATE
 target_include_directories(${BINARY_NAME} PRIVATE "${CMAKE_SOURCE_DIR}")
 
 target_include_directories(${BINARY_NAME} PRIVATE
+  "${CMAKE_CURRENT_SOURCE_DIR}/../flutter"
   "${CMAKE_CURRENT_SOURCE_DIR}/../flutter/ephemeral/.plugin_symlinks/firebase_core/windows/include"
   "${CMAKE_CURRENT_SOURCE_DIR}/../flutter/ephemeral/.plugin_symlinks/firebase_auth/windows/include"
   "${CMAKE_CURRENT_SOURCE_DIR}/../flutter/ephemeral/.plugin_symlinks/cloud_firestore/windows/include"

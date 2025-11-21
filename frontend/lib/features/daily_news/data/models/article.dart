@@ -51,10 +51,8 @@ class ArticleModel extends ArticleEntity {
     );
   }
 
-  // [NUEVO] Método para convertir a un mapa para la base de datos.
   Map<String, dynamic> toMap() {
     return {
-      // Si el id es nulo, usamos el hashCode del url como fallback.
       'id': id ?? url.hashCode,
       'author': author,
       'title': title,

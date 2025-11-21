@@ -2,20 +2,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app_clean_architecture/features/article_upload/domain/entities/article_entity.dart';
 import 'package:news_app_clean_architecture/features/article_upload/domain/usecases/create_article_usecase.dart';
 import 'package:news_app_clean_architecture/features/article_upload/domain/usecases/upload_article_image_usecase.dart';
-// [NUEVO IMPORT]
 import 'package:news_app_clean_architecture/features/auth/domain/usecases/get_current_user_usecase.dart';
 import 'article_creation_state.dart';
 
 class ArticleCreationCubit extends Cubit<ArticleCreationState> {
   final CreateArticleUseCase createArticleUseCase;
   final UploadArticleImageUseCase uploadArticleImageUseCase;
-  // [NUEVA DEPENDENCIA]
   final GetCurrentUserUseCase getCurrentUserUseCase;
 
-  ArticleCreationCubit(
-      this.createArticleUseCase,
-      this.uploadArticleImageUseCase,
-      this.getCurrentUserUseCase) // [MODIFICACIÓN]
+  ArticleCreationCubit(this.createArticleUseCase,
+      this.uploadArticleImageUseCase, this.getCurrentUserUseCase)
       : super(const ArticleCreationState());
 
   Future<void> submitArticle({
@@ -24,7 +20,6 @@ class ArticleCreationCubit extends Cubit<ArticleCreationState> {
   }) async {
     emit(state.copyWith(isLoading: true, errorMessage: null, isSuccess: false));
 
-    // [NUEVA LÓGICA] Obtener el UID real del usuario autenticado
     final userResult = await getCurrentUserUseCase.call();
     String? userId;
 
@@ -40,7 +35,6 @@ class ArticleCreationCubit extends Cubit<ArticleCreationState> {
     String? imageUrl = article.thumbnailURL;
 
     if (imagePath != null) {
-      // [MODIFICACIÓN] Pasamos el userId real al use case
       final imageResult = await uploadArticleImageUseCase(imagePath, userId!);
       final wasImageSuccessful = imageResult.fold(
         (error) {
@@ -56,11 +50,9 @@ class ArticleCreationCubit extends Cubit<ArticleCreationState> {
       if (!wasImageSuccessful) return;
     }
 
-    // [MODIFICACIÓN] Aseguramos que el authorUID del artículo sea el UID real
     final finalArticle = article.copyWith(
       thumbnailURL: imageUrl,
       authorUID: userId,
-      // [CAMBIO] Actualizando el nombre del autor.
       authorName: 'ElTerrorDeLosBizcochos123',
     );
 

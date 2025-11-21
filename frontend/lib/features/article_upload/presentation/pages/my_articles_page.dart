@@ -14,13 +14,10 @@ class MyArticlesPage extends StatelessWidget {
 
   void _sendToMain(BuildContext context, ArticleEntity firebaseArticle) {
     final dailyArticle = daily.ArticleEntity(
-      // El ID de la base de datos local será nulo, lo que es correcto.
-      // Se generará a partir del hash del URL al guardar.
       id: null,
       author: firebaseArticle.authorName,
       title: firebaseArticle.title,
       description: firebaseArticle.content,
-      // [CORRECCIÓN] Asignar un URL único para que el guardado local funcione.
       url: 'https://symmetry-reporter.com/article/${firebaseArticle.articleId}',
       urlToImage: firebaseArticle.thumbnailURL,
       publishedAt: firebaseArticle.datePublished.toIso8601String(),

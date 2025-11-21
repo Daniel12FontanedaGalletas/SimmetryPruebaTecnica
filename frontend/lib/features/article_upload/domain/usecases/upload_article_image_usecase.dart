@@ -6,7 +6,6 @@ class UploadArticleImageUseCase {
 
   UploadArticleImageUseCase(this.repository);
 
-  // [MODIFICACIÓN] Se acepta el userId
   Future<Either<dynamic, String>> call(String imagePath, String userId) async {
     return await repository.uploadArticleImage(imagePath, userId);
   }

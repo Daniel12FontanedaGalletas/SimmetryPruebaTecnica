@@ -112,8 +112,6 @@ class ArticleWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                // [CORRECCIÓN] Mostrar el botón de eliminar si el artículo es personalizado (tiene una URL de symmetry-reporter)
-                // y no estamos en la pantalla de "Guardados" (isRemovable == false).
                 if (!isRemovable &&
                     (article?.url ?? '').contains('symmetry-reporter.com') &&
                     onRemove != null)
@@ -150,7 +148,6 @@ class ArticleWidget extends StatelessWidget {
                       ),
                     ),
                   ),
-                // [CORRECCIÓN] Añadir un espacio si ambos botones son visibles.
                 if (!isRemovable &&
                     (article?.url ?? '').contains('symmetry-reporter.com') &&
                     onRemove != null &&
