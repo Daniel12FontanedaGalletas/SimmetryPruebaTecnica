@@ -1,5 +1,3 @@
-// Archivo generado por FlutterFire CLI.
-// No modifiques este archivo manualmente.
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
@@ -17,7 +15,6 @@ class DefaultFirebaseOptions {
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
-        // El plugin de Windows utiliza la configuración web.
         return web;
       case TargetPlatform.linux:
         throw UnsupportedError(

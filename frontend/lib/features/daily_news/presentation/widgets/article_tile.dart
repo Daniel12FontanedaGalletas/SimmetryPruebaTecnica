@@ -212,22 +212,9 @@ class ArticleWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildRemovableArea() {
-    return GestureDetector(
-      onTap: _onRemove,
-      child: const Icon(Icons.remove_circle_outline, color: Colors.red),
-    );
-  }
-
   void _onTap() {
     if (onArticlePressed != null) {
       onArticlePressed!(article!);
-    }
-  }
-
-  void _onRemove() {
-    if (onRemove != null) {
-      onRemove!(article!);
     }
   }
 }

@@ -41,22 +41,16 @@ import 'package:news_app_clean_architecture/features/auth/domain/usecases/sign_i
 import 'package:news_app_clean_architecture/features/auth/domain/usecases/sign_out_usecase.dart';
 import 'package:news_app_clean_architecture/features/auth/presentation/bloc/auth_bloc.dart';
 
-// [CORRECCIÓN] Esta es ahora la única fuente de verdad para la instancia de GetIt.
 final sl = GetIt.instance;
 
 Future<void> initializeDependencies() async {
-  // === 1. REGISTER SYNCHRONOUS DEPENDENCIES ===
-
-  // Firebase & Dio Instances
   sl.registerLazySingleton(() => FirebaseFirestore.instance);
   sl.registerLazySingleton(() => FirebaseStorage.instance);
   sl.registerLazySingleton(() => FirebaseAuth.instance);
   sl.registerLazySingleton(() => Dio());
 
-  // News API Service
   sl.registerLazySingleton<NewsApiService>(() => NewsApiService(sl()));
 
-  // Auth Dependencies
   sl.registerLazySingleton<AuthDatasource>(() => FirebaseAuthDatasource(sl()));
   sl.registerLazySingleton<auth_repo.AuthRepository>(
       () => AuthRepositoryImpl(sl()));
@@ -69,7 +63,6 @@ Future<void> initializeDependencies() async {
         signOutUseCase: sl(),
       ));
 
-  // Article Upload Dependencies
   sl.registerLazySingleton<FirebaseArticleDatasource>(
     () => FirebaseArticleDatasource(
       firestore: sl(),
@@ -87,24 +80,18 @@ Future<void> initializeDependencies() async {
   sl.registerFactory(() => ArticleCreationCubit(sl(), sl(), sl()));
   sl.registerFactory(() => MyArticlesCubit(sl(), sl()));
 
-  // === 2. REGISTER AND AWAIT ASYNC DEPENDENCIES (DATABASE) ===
   final database =
       await $FloorAppDatabase.databaseBuilder('app_database.db').build();
   sl.registerSingleton<AppDatabase>(database);
 
-  // === 3. REGISTER DEPENDENCIES THAT RELY ON THE DATABASE ===
-
-  // Daily News Repository
   sl.registerLazySingleton<ArticleRepository>(
       () => daily_news_repo.ArticleRepositoryImpl(sl(), sl()));
 
-  // Daily News Use Cases
   sl.registerLazySingleton(() => GetArticleUseCase(sl()));
   sl.registerLazySingleton(() => GetSavedArticleUseCase(sl()));
   sl.registerLazySingleton(() => SaveArticleUseCase(sl()));
   sl.registerLazySingleton(() => RemoveArticleUseCase(sl()));
 
-  // Daily News Blocs
   sl.registerFactory<RemoteArticlesBloc>(() => RemoteArticlesBloc(sl()));
   sl.registerFactory<LocalArticleBloc>(
       () => LocalArticleBloc(sl(), sl(), sl()));
