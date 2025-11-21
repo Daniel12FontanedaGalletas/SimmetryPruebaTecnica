@@ -184,11 +184,11 @@ class _DailyNewsState extends State<DailyNews> {
                     onArticlePressed: (article) => Navigator.pushNamed(
                         context, '/ArticleDetails',
                         arguments: article),
+                    // [CORRECCIÓN] Despachar el evento al BLoC para eliminar el artículo del estado.
                     onRemove: (article) {
-                      setState(() {
-                        articles.remove(article);
-                        _filteredArticles.remove(article);
-                      });
+                      context
+                          .read<RemoteArticlesBloc>()
+                          .add(RemoveArticle(article));
                     },
                     onSave: (article) async {
                       try {
